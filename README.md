@@ -1,30 +1,39 @@
-Pipeline Summary
+Germline WGS Variant Calling Pipeline (GATK4, hg38)
+Overview
 
+This repository contains an end-to-end germline whole-genome sequencing (WGS) variant calling pipeline implemented using GATK4 Best Practices.
+The pipeline processes paired-end FASTQ files and produces a high-quality, analysis-ready VCF, validated using standard QC metrics.
+
+The workflow was tested on HG00096 (1000 Genomes Project) and demonstrates a complete WGS analysis from raw reads to filtered variants.
+
+Pipeline Workflow
 Input
 
 Paired-end FASTQ files (2 × 100 bp)
 
-Human reference genome: hg38
+Human reference genome: hg38 / GRCh38
 
 dbSNP known sites (for BQSR)
 
 Output
 
-PASS-filtered germline SNP and INDEL VCFs
+PASS-filtered SNP and INDEL VCFs
+
+Merged germline variant callset
 
 Optional high-confidence genotype-filtered subset
 
-QC statistics (Ti/Tv, counts)
+QC statistics (Ti/Tv ratio, variant counts)
 
-Tab-delimited variant table for downstream analysis
+Tab-delimited variant table
 
-Workflow Steps
+Analysis Steps
 
 Reference Preparation
 
 FASTA indexing (samtools faidx)
 
-Sequence dictionary creation (GATK)
+Sequence dictionary creation (gatk CreateSequenceDictionary)
 
 BWA index generation
 
@@ -32,7 +41,7 @@ Read Alignment
 
 Alignment using BWA-MEM
 
-Sorting and indexing (SAMtools)
+Sorting and indexing with SAMtools
 
 Post-alignment Processing
 
@@ -44,7 +53,7 @@ Variant Calling
 
 HaplotypeCaller in gVCF mode
 
-GenotypeGVCFs for joint genotyping (single sample)
+GenotypeGVCFs for variant genotyping
 
 Variant Filtering
 
@@ -52,26 +61,26 @@ SNP and INDEL hard filtering (GATK-recommended thresholds)
 
 PASS-only variant selection
 
-SNP + INDEL merge
+SNP and INDEL merge
 
 Quality Control
 
 Variant counts
 
-Ti/Tv ratio using bcftools stats
+Transition/Transversion ratio (Ti/Tv) using bcftools stats
 
-Optional Analysis
+Optional Downstream Processing
 
-High-confidence genotype subset (DP ≥ 10, GQ ≥ 10)
+High-confidence genotype filtering (DP ≥ 10, GQ ≥ 10)
 
-VCF → TSV export for R/Python analysis
+VCF → TSV export for downstream analysis
 
 Final Outputs
 File	Description
-SRR062634.PASS.merged.vcf.gz	Final PASS-filtered germline variants
-SRR062634.PASS.stats.txt	QC statistics (Ti/Tv, counts)
-SRR062634.PASS.basic.tsv	Tabular variant summary
-SRR062634.PASS.GTDP10_GQ10.merged.vcf.gz	High-confidence genotype-filtered subset (optional)
+SRR062634.PASS.merged.vcf.gz	Final PASS-filtered germline variant callset
+PASS.stats.txt	QC metrics including Ti/Tv
+SRR062634.PASS.basic.tsv	Tab-delimited variant summary
+SRR062634.PASS.GTDP10_GQ10.merged.vcf.gz	High-confidence genotype-filtered subset
 Key Results (HG00096)
 
 PASS SNPs: ~939,000
@@ -82,13 +91,13 @@ Total PASS variants: ~1.06 million
 
 Ti/Tv ratio: 1.99
 
-A Ti/Tv ratio of ~2.0 is consistent with high-quality human WGS data, confirming correct variant discovery and filtering.
+A Ti/Tv ratio of ~2.0 is consistent with high-quality human whole-genome sequencing data, confirming correct variant discovery and filtering.
 
-Tools & Versions
+Tools and Software
 
-GATK: 4.4.0.0
+GATK: v4.4.0.0
 
-BWA: MEM
+BWA-MEM
 
 SAMtools
 
